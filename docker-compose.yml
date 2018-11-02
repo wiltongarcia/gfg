@@ -1,0 +1,66 @@
+version: '2.2'
+services:
+  elasticsearch0:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.4.2
+    container_name: elasticsearch0
+    environment:
+      - cluster.name=elastic-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.security.enabled=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - 9200:9200
+    networks:
+        docker_net:
+          ipv4_address: ${ELASTIC_0_IP}
+
+  elasticsearch1:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.4.2
+    container_name: elasticsearch1
+    environment:
+      - cluster.name=elastic-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "discovery.zen.ping.unicast.hosts=elasticsearch0"
+      - xpack.security.enabled=false
+    ulimits:
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    networks:
+        docker_net:
+          ipv4_address: ${ELASTIC_1_IP}
+
+  haproxy:
+    build: ./haproxy
+    container_name: haproxy
+    ports:
+        - 80:80
+        - 9201:9201
+    expose:
+        - 80
+        - 9201
+    networks:
+        docker_net:
+            ipv4_address: ${HA_PROXY_IP}
+    environment:
+        - BE_0_IP=${BE_0_IP}
+        - BE_1_IP=${BE_1_IP}
+        - FE_0_IP=${FE_0_IP}
+        - FE_1_IP=${FE_1_IP}
+        - ELASTIC_0_IP=${ELASTIC_0_IP}
+        - ELASTIC_1_IP=${ELASTIC_1_IP}
+        - NGINX_EXPOSED_PORT=${NGINX_EXPOSED_PORT}
+
+networks:
+  docker_net:
+      driver: bridge
+      ipam:
+          driver: default
+          config:
+              - subnet: ${NETWORK_SUBNET}
