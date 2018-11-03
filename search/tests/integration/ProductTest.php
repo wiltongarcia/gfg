@@ -1,28 +1,30 @@
 <?php
+namespace Tests\Integration;
 
-use Laravel\Lumen\Testing\DatabaseMigrations;
-use Laravel\Lumen\Testing\DatabaseTransactions;
+use Tests\TestCase;
 
-class ProductTest extends Laravel\Lumen\Testing\TestCase
+use App\Services\Auth\Signer;
+use Lcobucci\JWT\Builder;
+
+/**
+ * Integration Tests
+ *
+ * @package Tests\Integration
+ * @author Wilton Garcia <wiltonog@gmail.com>
+**/
+class ProductTest extends TestCase
 {
     /**
-     * Creates the application.
-     *
-     * @return \Laravel\Lumen\Application
-     */
-    public function createApplication()
-    {
-        return require __DIR__.'/../../bootstrap/app.php';
-    }
-
-    /**
-     * A basic test example.
+     * Test of Products endpoint without errors
      *
      * @return void
+     *
+     * @group integration
      */
     public function testGetProducts()
     {
-        $response = $this->json('GET', '/products', []);
+        $token = $this->getToken();
+        $response = $this->json('GET', '/products', [], ['Authorization' => 'Bearer ' . $token]);
 
         $response
             ->seeStatusCode(200)
@@ -36,5 +38,31 @@ class ProductTest extends Laravel\Lumen\Testing\TestCase
                     ]
                 ]
             ]);
+    }
+
+    /**
+     * Test Without Authorization Header
+     *
+     * @return void
+     *
+     * @group integration
+     */
+    public function testGetProductsWithoutToken()
+    {
+        $response = $this->get('/products', []);
+        $response->seeStatusCode(401);
+    }
+
+
+    /**
+     * Create a token
+     *
+     * @return string
+     **/
+    private function getToken()
+    {         
+        return(new Builder())
+            ->sign(new Signer(), config('jwt.secret'))
+            ->getToken();
     }
 }

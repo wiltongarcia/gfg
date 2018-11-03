@@ -3,21 +3,27 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Illuminate\Contracts\Auth\Factory as Auth;
+use App\Services\Auth;
 
+/**
+ * Middleware for Authentication
+ *
+ * @package App\Http\Controllers
+ * @author Wilton Garcia <wiltonog@gmail.com>
+**/
 class Authenticate
 {
     /**
-     * The authentication guard factory instance.
+     * The authentication instance
      *
-     * @var \Illuminate\Contracts\Auth\Factory
+     * @var \App\Services\Auth
      */
     protected $auth;
 
     /**
      * Create a new middleware instance.
      *
-     * @param  \Illuminate\Contracts\Auth\Factory  $auth
+     * @param  \App\Services\Auth  $auth
      * @return void
      */
     public function __construct(Auth $auth)
@@ -35,7 +41,7 @@ class Authenticate
      */
     public function handle($request, Closure $next, $guard = null)
     {
-        if ($this->auth->guard($guard)->guest()) {
+        if (!$this->auth->validate($request)) {
             return response('Unauthorized.', 401);
         }
 

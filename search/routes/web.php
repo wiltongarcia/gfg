@@ -11,4 +11,7 @@
 |
 */
 
-$router->get('/products', 'ProductController@index');
+$router->group(['middleware' => 'auth'], function($router) {
+    $router->get('/products', 'ProductController@index');
+});
+

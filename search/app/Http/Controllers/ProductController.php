@@ -4,23 +4,20 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+/**
+ * Controller of Products
+ *
+ * @package App\Http\Controllers
+ * @author Wilton Garcia <wiltonog@gmail.com>
+**/
 class ProductController extends Controller
 {
     /**
-     * Create a new controller instance.
+     * Endpoint to search products
      *
-     * @return void
-     */
-    public function __construct()
-    {
-        //
-    }
-
-    /**
-     * undocumented function
+     * @param \Illuminate\Http\Request $request
      *
-     * @return void
-     * @author yourname
+     * @return \Illuminate\Http\Response
      **/
     public function index(Request $request)
     {
