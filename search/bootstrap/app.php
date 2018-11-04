@@ -25,7 +25,7 @@ $app = new Laravel\Lumen\Application(
 
 $app->configure('jwt');
 
-// $app->withFacades();
+$app->withFacades();
 
 // $app->withEloquent();
 
@@ -83,6 +83,9 @@ $app->routeMiddleware([
 // $app->register(App\Providers\AppServiceProvider::class);
 $app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
+
+// Elasticsearch
+$app->register(Basemkhirat\Elasticsearch\ElasticsearchServiceProvider::class);
 
 /*
 |--------------------------------------------------------------------------

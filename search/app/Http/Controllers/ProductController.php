@@ -21,15 +21,23 @@ class ProductController extends Controller
      **/
     public function index(Request $request)
     {
-       return response()->json([
-           'data' => [
-               [
-                   'title' => 'title',
-                   'brand' => 'brand',
-                   'price' => 0.0,
-                   'stock' => 0
-               ]
-           ]
-       ]); 
+        $query = $request->get('q', '*');
+        $filter = $request->get('filter');
+        $fields = $request->get('fields');
+        $order = $request->get('order', '_score');
+        $orderDir = $request->get('orderDir', 'asc');
+        $perPage = $request->get('perPage', 10);
+
+        $search = \App\Product::search($query);
+
+        if (!empty($filter)) {
+            list($field, $value) = preg_split('/:/', $filter);
+            $search->where($field, $value);
+        }
+
+        $products = $search->orderBy($order, $orderDir)
+            ->paginate($perPage);
+
+        return response()->json($products); 
     }
 }
