@@ -1,0 +1,22 @@
+#!/bin/sh
+set -e
+
+cd /app
+file="create.lock"
+if [ ! -f "$file" ]
+then    
+    echo "1" > create.lock
+    sleep 240
+    cp .env.local .env
+    php artisan es:indices:create 2>&1 > /dev/null
+fi
+
+file="seed.lock"
+if [ ! -f "$file" ]
+then    
+    echo "1" > seed.lock
+    sleep 60
+    php artisan db:seed 2>&1 > /dev/null
+fi
+
+exec "$@"

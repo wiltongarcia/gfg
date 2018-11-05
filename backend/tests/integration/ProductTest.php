@@ -25,7 +25,7 @@ class ProductTest extends TestCase
     {
         $token = $this->getToken();
         $response = $this->json('GET', 
-            '/products', [], 
+            '/v1/products', [], 
             [
                 'Authorization' => 'Bearer ' . $token,
             ]
@@ -60,7 +60,7 @@ class ProductTest extends TestCase
     {
         $token = $this->getToken();
         $response = $this->json('GET', 
-            '/products?filter=brand:Factory10', [], 
+            '/v1/products?filter=brand:Factory10', [], 
             [
                 'Authorization' => 'Bearer ' . $token,
             ]
@@ -94,7 +94,7 @@ class ProductTest extends TestCase
     {
         $token = $this->getToken();
         $response = $this->json('GET', 
-            '/products?q=et', [], 
+            '/v1/products?q=et', [], 
             [
                 'Authorization' => 'Bearer ' . $token,
             ]
@@ -125,7 +125,7 @@ class ProductTest extends TestCase
     {
         $token = $this->getToken();
         $response = $this->json('GET', 
-            '/products?perPage=100', [], 
+            '/v1/products?perPage=100', [], 
             [
                 'Authorization' => 'Bearer ' . $token,
             ]
@@ -158,8 +158,34 @@ class ProductTest extends TestCase
      */
     public function testGetProductsWithoutToken()
     {
-        $response = $this->get('/products', []);
+        $response = $this->get('/v1/products', []);
         $response->seeStatusCode(401);
+    }
+
+    /**
+     * Test Without Authorization Header
+     *
+     * @return void
+     *
+     * @group integration
+     */
+    public function testGetProductsWithoutVersion()
+    {
+        $response = $this->get('/products', []);
+        $response->seeStatusCode(404);
+    }
+
+    /**
+     * Test of Heath Check
+     *
+     * @return void
+     *
+     * @group integration
+     */
+    public function testHealthCheck()
+    {
+        $response = $this->get('/healthcheck', []);
+        $response->seeStatusCode(200);
     }
 
 

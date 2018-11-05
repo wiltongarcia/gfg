@@ -1,8 +1,9 @@
-version: '2.2'
+version: '3'
 services:
   elasticsearch0:
     image: docker.elastic.co/elasticsearch/elasticsearch:6.4.2
     container_name: elasticsearch0
+    restart: always
     environment:
       - cluster.name=elastic-cluster
       - bootstrap.memory_lock=true
@@ -12,8 +13,6 @@ services:
       memlock:
         soft: -1
         hard: -1
-    ports:
-      - 9200:9200
     networks:
         docker_net:
           ipv4_address: ${ELASTIC_0_IP}
@@ -21,13 +20,13 @@ services:
   elasticsearch1:
     image: docker.elastic.co/elasticsearch/elasticsearch:6.4.2
     container_name: elasticsearch1
+    restart: always
     environment:
       - cluster.name=elastic-cluster
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
       - "discovery.zen.ping.unicast.hosts=elasticsearch0"
       - xpack.security.enabled=false
-    ulimits:
     ulimits:
       memlock:
         soft: -1
@@ -36,26 +35,87 @@ services:
         docker_net:
           ipv4_address: ${ELASTIC_1_IP}
 
+  backend0:
+    build:
+      context: ./backend/
+      dockerfile: ./Dockerfile
+    container_name: backend0
+    restart: always
+    depends_on:
+      - elasticsearch0
+      - elasticsearch1
+    networks:
+      docker_net:
+        ipv4_address: ${BE_0_IP}
+
+  backend1:
+    build:
+      context: ./backend/
+      dockerfile: ./Dockerfile
+    container_name: backend1
+    restart: always
+    depends_on:
+      - elasticsearch0
+      - elasticsearch1
+    networks:
+      docker_net:
+        ipv4_address: ${BE_1_IP}
+
+  frontend0:
+    build:
+      context: ./frontend/
+      dockerfile: ./Dockerfile
+    container_name: frontend0
+    restart: always
+    depends_on:
+      - backend0
+      - backend1
+    networks:
+      docker_net:
+        ipv4_address: ${FE_0_IP}
+
+  frontend1:
+    build:
+      context: ./frontend/
+      dockerfile: ./Dockerfile
+    container_name: frontend1
+    restart: always
+    depends_on:
+      - backend0
+      - backend1
+    networks:
+      docker_net:
+        ipv4_address: ${FE_1_IP}
+
   haproxy:
     build: ./haproxy
     container_name: haproxy
+    restart: always
+    depends_on:
+      - elasticsearch0
+      - elasticsearch1
+      - frontend0
+      - frontend1
+      - backend0
+      - backend1
     ports:
-        - 80:80
+        - 8001:8001
         - 9201:9201
     expose:
-        - 80
+        - 8001
         - 9201
     networks:
         docker_net:
             ipv4_address: ${HA_PROXY_IP}
     environment:
         - BE_0_IP=${BE_0_IP}
+        - BE_V1_0_IP=${BE_V1_0_IP}
+        - BE_V1_1_IP=${BE_V1_1_IP}
         - BE_1_IP=${BE_1_IP}
         - FE_0_IP=${FE_0_IP}
         - FE_1_IP=${FE_1_IP}
         - ELASTIC_0_IP=${ELASTIC_0_IP}
         - ELASTIC_1_IP=${ELASTIC_1_IP}
-        - NGINX_EXPOSED_PORT=${NGINX_EXPOSED_PORT}
 
 networks:
   docker_net:

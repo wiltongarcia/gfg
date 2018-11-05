@@ -37,7 +37,7 @@ class ProductsIndexSeeder extends Seeder
                 'Young Value Co.' 
             ];
 
-            for($i = 0; $i < 1000; $i++) {
+            for($i = 0; $i < 100; $i++) {
                 $product = new App\Product();
                 $product->title = $faker->text(30);
                 $product->brand = $companies[$i % (count($companies) - 1)];
@@ -46,7 +46,6 @@ class ProductsIndexSeeder extends Seeder
                 $product->save();
             }
         } catch (\Exception $e) {
-         var_dump($e); die();
         }
     }
 }

@@ -11,7 +11,11 @@
 |
 */
 
+$router->get('/healthcheck', function(){
+    return 'OK';
+});
+
 $router->group(['middleware' => 'auth'], function($router) {
-    $router->get('/products', 'ProductController@index');
+    $router->get('/{version}/products', 'ProductController@index');
 });
 

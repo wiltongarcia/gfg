@@ -3,6 +3,10 @@
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 
+$router->get('/healthcheck', function(){
+    return 'OK';
+});
+
 $router->get('/', ['as' => 'home', function (Request $request) use ($router) {
 
     // Make the queryString to Products API
@@ -15,7 +19,7 @@ $router->get('/', ['as' => 'home', function (Request $request) use ($router) {
     // Request Products
     $client = new Client([
         'base_uri' => config('products.base_uri'),
-        'timeout'  => 20,
+        'timeout'  => 30,
     ]);
 
     $response = $client->request('GET',
