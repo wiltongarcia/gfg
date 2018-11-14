@@ -31,6 +31,7 @@ $router->get('/', ['as' => 'home', function (Request $request) use ($router) {
 
     // JSON response
     $data = json_decode($response->getBody());
+    var_dump($data); die();
 
     // Remove the path of the URLs
     $data->next_page_url = preg_replace(

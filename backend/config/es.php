@@ -79,6 +79,9 @@ return [
                         'title' => [
                             'type' => 'text'
                         ],
+                        'image' => [
+                            'type' => 'text'
+                        ],
                         'brand' => [
                             'type' => 'keyword'
                         ],

@@ -41,6 +41,8 @@ services:
       dockerfile: ./Dockerfile
     container_name: backend0
     restart: always
+    volumes:
+        - "./backend/:/app"
     depends_on:
       - elasticsearch0
       - elasticsearch1
@@ -54,6 +56,8 @@ services:
       dockerfile: ./Dockerfile
     container_name: backend1
     restart: always
+    volumes:
+        - "./backend/:/app"
     depends_on:
       - elasticsearch0
       - elasticsearch1
@@ -67,6 +71,8 @@ services:
       dockerfile: ./Dockerfile
     container_name: frontend0
     restart: always
+    volumes:
+        - "./frontend:/app"
     depends_on:
       - backend0
       - backend1
@@ -80,6 +86,8 @@ services:
       dockerfile: ./Dockerfile
     container_name: frontend1
     restart: always
+    volumes:
+        - "./frontend:/app"
     depends_on:
       - backend0
       - backend1
@@ -100,9 +108,11 @@ services:
       - backend1
     ports:
         - 8001:8001
+        - 8002:8002
         - 9201:9201
     expose:
         - 8001
+        - 8002
         - 9201
     networks:
         docker_net:

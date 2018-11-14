@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\Search\SearchEntity;
 use Illuminate\Http\Request;
+
 
 /**
  * Controller of Products
@@ -27,6 +29,18 @@ class ProductController extends Controller
         $order = $request->get('order', '_score');
         $orderDir = $request->get('orderDir', 'asc');
         $perPage = $request->get('perPage', 10);
+
+
+        $searchEntity = new SearchEntity([
+            'query' => $query,
+            'filter' => $filter,
+            'order' => $order,
+            'orderDir' => $orderDir,
+            'perPage' => $perPage
+        ]);
+
+        $searchList = $searchService->search($searchEntity);
+
 
         $search = \App\Product::search($query);
 
