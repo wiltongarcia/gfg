@@ -2,10 +2,10 @@
 namespace App\Services\Search;
 
 /**
- * undocumented class
+ * Search Interface
  *
- * @package default
- * @author yourname
+ * @package \App\Services\Search
+ * @author Wilton Garcia <wiltonog@gmail.com>
  **/
 interface SearchInterface
 {

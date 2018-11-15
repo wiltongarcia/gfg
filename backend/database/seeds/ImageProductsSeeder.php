@@ -1,6 +1,9 @@
 <?php
 
+use App\Services\ProductAdapter;
+use GuzzleHttp\Client;
 use Illuminate\Database\Seeder;
+
 
 class ImageProductsSeeder extends Seeder
 {
@@ -12,15 +15,20 @@ class ImageProductsSeeder extends Seeder
     public function run()
     {
         try{
-            $products = (new App\Product())->all();
-            foreach ($products as $key => $product) {
-                //var_dump($product->_id); die();
-                App\Product::id($product->_id)->update([
-                    'image' => (($key % 62) +1).".jpg"
-                ]);
+            $products = (new ProductAdapter())->scroll("2m")
+                 ->take(1000)
+                 ->get();
+            while($products->isNotEmpty()) {
+                foreach ($products as $key => $product) {
+                    $product->image = (($key % 62) +1).'.jpg';
+                    $product->save();
+                }
+                $products = (new ProductAdapter())->scroll("2m")
+                    ->scrollID($products->scroll_id)
+                    ->get();
             }
         } catch (\Exception $e) {
-            var_dump($e->getMessage()); die();
+            var_dump($e); die();
         }
     }
 }

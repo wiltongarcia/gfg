@@ -73,6 +73,7 @@
             <table class="table table-striped table-sm">
               <thead>
                 <tr>
+                  <th>Image</th>
                   <th>Title</th>
                   <th>Brand</th>
                   <th>Price</th>
@@ -82,6 +83,7 @@
               <tbody>
                 @foreach ($response->data as $product)
                 <tr>
+                  <td><img width="144" height="144" src="{{url('/images/'.$product->image)}}" alt="" /></td>
                   <td>{{$product->title}}</td>
                   <td><a href="{{route('home', array_merge($query, ['filter' => 'brand:'.$product->brand]))}}">{{$product->brand}}</a></td>
                   <td>{{$product->price}}</td>

@@ -16,7 +16,9 @@ if [ ! -f "$file" ]
 then    
     echo "1" > seed.lock
     sleep 60
-    php artisan db:seed 2>&1 > /dev/null
+    php artisan db:seed --class=ProductsIndexSeeder 2>&1 > /dev/null
+    sleep 60
+    php artisan db:seed --class=ImageProductsSeeder 2>&1 > /dev/null
 fi
 
 exec "$@"

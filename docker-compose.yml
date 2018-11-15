@@ -108,11 +108,9 @@ services:
       - backend1
     ports:
         - 8001:8001
-        - 8002:8002
         - 9201:9201
     expose:
         - 8001
-        - 8002
         - 9201
     networks:
         docker_net:

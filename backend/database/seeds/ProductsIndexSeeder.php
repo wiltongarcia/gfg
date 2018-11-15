@@ -1,5 +1,6 @@
 <?php
 
+use App\Services\ProductAdapter;
 use Illuminate\Database\Seeder;
 
 class ProductsIndexSeeder extends Seeder
@@ -38,7 +39,7 @@ class ProductsIndexSeeder extends Seeder
             ];
 
             for($i = 0; $i < 100; $i++) {
-                $product = new App\Product();
+                $product = new ProductAdapter();
                 $product->title = $faker->text(30);
                 $product->brand = $companies[$i % (count($companies) - 1)];
                 $product->price = $faker->randomFloat(2);
@@ -46,6 +47,7 @@ class ProductsIndexSeeder extends Seeder
                 $product->save();
             }
         } catch (\Exception $e) {
+            var_dump($e); die();
         }
     }
 }

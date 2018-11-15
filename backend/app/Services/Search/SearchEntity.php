@@ -1,10 +1,11 @@
 <?php
+namespace App\Services\Search;
 
 /**
- * undocumented class
+ * Search Entity
  *
- * @packaged default
- * @author yourname
+ * @package \App\Services\Search
+ * @author Wilton Garcia <wiltonog@gmail.com>
  **/
 class SearchEntity
 {
@@ -15,10 +16,9 @@ class SearchEntity
     public $perPage;
 
     /**
-     * undocumented function
+     * Constructor
      *
      * @return void
-     * @author yourname
      **/
     public function __construct(array $attributes)
     {

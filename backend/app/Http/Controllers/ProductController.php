@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\ProductAdapter;
+use App\Services\ProductFactory;
+use App\Services\Search;
 use App\Services\Search\SearchEntity;
 use Illuminate\Http\Request;
 
@@ -23,35 +26,30 @@ class ProductController extends Controller
      **/
     public function index(Request $request)
     {
-        $query = $request->get('q', '*');
-        $filter = $request->get('filter');
-        $fields = $request->get('fields');
-        $order = $request->get('order', '_score');
-        $orderDir = $request->get('orderDir', 'asc');
-        $perPage = $request->get('perPage', 10);
-
+        $searchService = new Search(new ProductAdapter());
 
         $searchEntity = new SearchEntity([
-            'query' => $query,
-            'filter' => $filter,
-            'order' => $order,
-            'orderDir' => $orderDir,
-            'perPage' => $perPage
+            'query' => $request->get('q'),
+            'filter' => $request->get('filter'),
+            'order' => $request->get('order'),
+            'orderDir' => $request->get('orderDir'),
+            'perPage' => $request->get('perPage')
         ]);
 
-        $searchList = $searchService->search($searchEntity);
+        $searchData = $searchService->search($searchEntity);
 
-
-        $search = \App\Product::search($query);
-
-        if (!empty($filter)) {
-            list($field, $value) = preg_split('/:/', $filter);
-            $search->where($field, $value);
+        $products = [];
+        foreach ($searchData['data'] as $attributes) {
+            $products[] = ProductFactory::create($attributes);
         }
 
-        $products = $search->orderBy($order, $orderDir)
-            ->paginate($perPage);
-
-        return response()->json($products); 
+        return response()->json([
+            'prev_page_url' => $searchData['prev_page_url'],
+            'next_page_url' => $searchData['next_page_url'],
+            'current_page' => $searchData['current_page'],
+            'total' => $searchData['total'],
+            'last_page' => $searchData['last_page'],
+            'data' => $products
+        ]); 
     }
 }
